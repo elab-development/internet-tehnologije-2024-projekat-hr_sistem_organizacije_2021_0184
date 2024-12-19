@@ -56,5 +56,5 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('/aktivnosti/{id}', [\App\Http\Controllers\AktivnostiController::class, 'delete']);
 
     Route::post('/aktivnosti-clana', [\App\Http\Controllers\AktivnostiClanaController::class, 'store']);
-    Route::delete('/aktivnosti-clana/{id}', [\App\Http\Controllers\AktivnostiClanaController::class, 'delete']);
+    Route::delete('/aktivnosti-clana/{id}', [\App\Http\Controllers\AktivnostiClanaController::class, 'delete']);
 });
