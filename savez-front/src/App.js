@@ -1,12 +1,20 @@
-import logo from './logo.svg';
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import {Alert, Container} from "react-bootstrap";
+import Navigacija from "./komponente/Navigacija";
 
 function App() {
   return (
-    <div className="App">
-      <h1>Test</h1>
-    </div>
+
+      <>
+          <Navigacija />
+          <Container>
+
+
+          </Container>
+      </>
+
   );
 }
 
-export default App;
+export default App;
