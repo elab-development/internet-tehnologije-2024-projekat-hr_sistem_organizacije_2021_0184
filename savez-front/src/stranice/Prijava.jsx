@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Form} from "react-bootstrap";
+import {Alert, Button, Form} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import {FaGear} from "react-icons/fa6";
 import {FaDoorOpen, FaUser} from "react-icons/fa";
@@ -9,6 +9,8 @@ import server from "../pomocne/server";
 const Prijava = () => {
 
     const [isPrijava, setIsPrijava] = React.useState(true);
+    const [error, setError] = React.useState('');
+    const [poruka, setPoruka] = React.useState('');
 
     const {formData, handleChange} = useForm({
         email: '',
@@ -21,18 +23,48 @@ const Prijava = () => {
 
         server.post('/login', formData).then(res => {
             console.log(res);
-            window.sessionStorage.setItem('token', res.data.podaci.token);
-            window.sessionStorage.setItem('user', JSON.stringify(res.data.podaci.user));
-            window.location.href = '/';
+            if (res.data.uspesno === true) {
+                window.sessionStorage.setItem('token', res.data.podaci.token);
+                window.sessionStorage.setItem('user', JSON.stringify(res.data.podaci.user));
+                window.location.href = '/';
+            }else{
+                setError(res.data.poruka);
+            }
+
         }).catch(err => {
             console.log(err);
+            setError(err.data.poruka);
         })
+    }
 
+    const register = () => {
+        console.log(formData);
+
+        server.post('/register', formData).then(res => {
+            console.log(res);
+            if (res.data.uspesno === true) {
+                setIsPrijava(true);
+                setPoruka('Uspesno ste se registrovali, sada se mozete prijaviti');
+            }else{
+                setError(res.data.poruka);
+            }
+
+        }).catch(err => {
+            console.log(err);
+            setError(err.data.poruka);
+        })
     }
 
 
     return (
         <>
+            {
+                poruka !== '' && (
+                    <Alert className="mt-3" variant="success">
+                        {poruka}
+                    </Alert>
+                )
+            }
             {
                 isPrijava && (
                     <>
@@ -85,11 +117,19 @@ const Prijava = () => {
                                 }
                             }>Imate nalog, ulogujte se</a>
                             <hr />
-                            <Button variant="dark" type="button">
+                            <Button variant="dark" type="button" onClick={register}>
                                 Registruj se <FaUser />
                             </Button>
                         </Form>
                     </>
+                )
+            }
+
+            {
+                error !== '' && (
+                    <Alert className="mt-3" variant="danger">
+                        {error}
+                    </Alert>
                 )
             }
 
