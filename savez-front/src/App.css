@@ -17,3 +17,23 @@ body {
   padding: 1px;
   margin-right: 2px;
 }
+
+tim-IT span {
+  color: #750b0b !important;
+}
+
+.tim-CR span {
+  color: #081a83 !important;
+}
+
+.tim-AR span {
+  color: #ae6b07 !important;
+}
+
+.tim-PR span {
+  color: #207a1a !important;
+}
+
+.tim-HR span {
+  color: #500c8a !important;
+}
