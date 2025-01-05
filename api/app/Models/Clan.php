@@ -10,6 +10,7 @@ class Clan extends Model
 
     protected $fillable = [
         'imePrezime',
+        'user_id',
         'email',
         'adresa',
         'telefon',

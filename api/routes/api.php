@@ -28,6 +28,9 @@ Route::get('/aktivnosti', [\App\Http\Controllers\AktivnostiController::class, 'i
 //sanctum group
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
+    Route::get('/clanovi-user/{userId}', [\App\Http\Controllers\ClanController::class, 'nadjiClanaPoUserIdu']);
+    Route::get('/povezi/{clanId}/{userId}', [\App\Http\Controllers\ClanController::class, 'poveziUseraSaClanom']);
+
     Route::get('/clanovi-projekta/{projekatId}', [\App\Http\Controllers\ClanoviProjektaController::class, 'findByProjekat']);
     Route::get('/projekti-clana/{clanId}', [\App\Http\Controllers\ClanoviProjektaController::class, 'findByClan']);
 

@@ -132,4 +132,26 @@ class ClanController extends JsonController
             ->get();
         return $this->uspesno($timovi, 'Uspesno grupisani clanovi po timu');
     }
+
+    public function nadjiClanaPoUserIdu($userId): \Illuminate\Http\JsonResponse
+    {
+        $clan = \App\Models\Clan::where('user_id', $userId)->first();
+        if ($clan === null) {
+            return $this->neuspesno('Clan nije pronadjen');
+        }
+        return $this->uspesno(new ClanResurs($clan), 'Uspesno pronadjen clan');
+    }
+
+    public function poveziUseraSaClanom($clanId, $userId): \Illuminate\Http\JsonResponse
+    {
+        $clan = \App\Models\Clan::find($clanId);
+        if ($clan === null) {
+            return $this->neuspesno('Clan nije pronadjen');
+        }
+
+        $clan->user_id = $userId;
+        $clan->save();
+
+        return $this->uspesno(new ClanResurs($clan), 'Uspesno povezan clan sa userom');
+    }
 }
