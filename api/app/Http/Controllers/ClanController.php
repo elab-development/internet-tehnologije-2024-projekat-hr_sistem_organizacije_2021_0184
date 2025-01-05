@@ -153,5 +153,5 @@ class ClanController extends JsonController
         $clan->save();
 
         return $this->uspesno(new ClanResurs($clan), 'Uspesno povezan clan sa userom');
-    }
+    }
 }

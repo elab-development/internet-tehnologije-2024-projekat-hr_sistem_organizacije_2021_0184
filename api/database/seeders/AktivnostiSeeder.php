@@ -16,15 +16,27 @@ class AktivnostiSeeder extends Seeder
 
         $projekti = \App\Models\Projekat::all();
 
-        for ($i = 0; $i < 50; $i++) {
+        $aktivnosti = [
+            "Postavljanje standa",
+            "Nosenje kutija",
+            "Anketiranje",
+            "Pisanje izvestaja",
+            "Pisanje plana",
+            "Pisanje analize",
+            "Organizacija sastanka",
+            "Organizacija timbildinga",
+        ];
+
+        foreach ($aktivnosti as $aktivnost) {
             \App\Models\Aktivnost::create([
-                'nazivAktivnosti' => $faker->sentence,
-                'rok' => $faker->date(),
+                'nazivAktivnosti' => $aktivnost,
+                'rok' => $faker->dateTimeBetween('+1 week', '+2 month')->format('Y-m-d'),
                 'opisAktivnosti' => $faker->text,
                 'projekatId' => $faker->randomElement($projekti)->id,
                 'poeni' => $faker->numberBetween(1, 10),
                 'status' => $faker->randomElement(['U toku', 'Inicijalizovana', 'Zavrsena'])
             ]);
         }
+        
     }
 }
