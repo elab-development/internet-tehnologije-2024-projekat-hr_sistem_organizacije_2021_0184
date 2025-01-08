@@ -28,6 +28,9 @@ Route::get('/aktivnosti', [\App\Http\Controllers\AktivnostiController::class, 'i
 //sanctum group
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/nepovezani-korisnici', [\App\Http\Controllers\LoginController::class, 'nepovezaniKorisnici']);
+    Route::put('/promeni-ocenu/{id}', [\App\Http\Controllers\AktivnostiClanaController::class, 'promeniOcenu']);
+    Route::get('aktivnosti-clana', [\App\Http\Controllers\AktivnostiClanaController::class, 'index']);
+
     Route::get('/clanovi-user/{userId}', [\App\Http\Controllers\ClanController::class, 'nadjiClanaPoUserIdu']);
     Route::get('/povezi/{clanId}/{userId}', [\App\Http\Controllers\ClanController::class, 'poveziUseraSaClanom']);
 

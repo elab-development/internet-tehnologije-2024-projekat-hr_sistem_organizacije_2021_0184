@@ -5,9 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Resources\AktivnostClanaResurs;
 use App\Models\AktivnostClana;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AktivnostiClanaController extends JsonController
 {
+    public function index(Request $request)
+    {
+        $aktivnosti = AktivnostClana::all();
+        return $this->uspesno(AktivnostClanaResurs::collection($aktivnosti), 'Aktivnosti clana pronadjene.');
+    }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -46,6 +53,19 @@ class AktivnostiClanaController extends JsonController
         $aktivnostiClanova = AktivnostClana::where('clanId', $clanId)->get();
 
         return $this->uspesno(AktivnostClanaResurs::collection($aktivnostiClanova), 'Aktivnosti clana pronadjene.');
+    }
+
+    public function promeniOcenu(Request $request, $id)
+    {
+        $aktivnostClana = AktivnostClana::find($id);
+
+        if ($aktivnostClana) {
+            $aktivnostClana->ocena = $request->ocena;
+            $aktivnostClana->save();
+            return $this->uspesno(new AktivnostClanaResurs($aktivnostClana), 'Ocena aktivnosti je uspešno azurirana.');
+        }
+
+        return $this->neuspesno('Aktivnost clana nije pronađena.');
     }
 
 }
