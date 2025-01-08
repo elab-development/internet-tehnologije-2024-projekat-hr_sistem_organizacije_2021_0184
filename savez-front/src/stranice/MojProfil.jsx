@@ -15,7 +15,9 @@ const MojProfil = () => {
     useEffect(() => {
         server.get('/clanovi-user/' + user.id).then(res => {
             console.log(res);
-            setClan(res.data.podaci);
+            if (res.data.uspesno === true){
+                setClan(res.data.podaci);
+            }
         }).catch(err => {
             console.log(err);
         })

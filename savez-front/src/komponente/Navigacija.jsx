@@ -13,7 +13,7 @@ const Navigacija = () => {
     const odjaviSe = () => {
         window.sessionStorage.removeItem('token');
         window.sessionStorage.removeItem('user');
-        window.location.reload();
+        window.location.href = '/';
     }
 
     return (
