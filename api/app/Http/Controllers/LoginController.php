@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\UserResurs;
+use App\Models\Clan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class LoginController extends JsonController
@@ -60,4 +62,15 @@ class LoginController extends JsonController
         return $this->uspesno(new UserResurs($korisnik), 'Uspešno ste se registrovali.');
     }
 
+    public function nepovezaniKorisnici()
+    {
+        //users where user id not in clanovi
+        $usersNotInClanovi = DB::table('users')
+            ->whereNotIn('id', function ($query) {
+                $query->select('user_id')->from('clanovi')->whereNotNull('user_id');
+            })
+            ->get();
+
+        return $this->uspesno(UserResurs::collection($usersNotInClanovi), 'Uspesno pronadjeni nepovezani korisnici');
+    }
 }
