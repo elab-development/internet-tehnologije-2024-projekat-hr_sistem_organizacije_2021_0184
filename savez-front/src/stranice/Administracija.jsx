@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {Alert, Button, Col, Form, Row} from "react-bootstrap";
+import {Alert, Button, Col, Form, Row, Table} from "react-bootstrap";
 import {CgDanger} from "react-icons/cg";
 import server from "../pomocne/server";
 import useForm from "../pomocne/useForm";
@@ -15,6 +15,9 @@ const Administracija = () => {
     const [aktivnosti, setAktivnosti] = React.useState([]);
     const [aktivnostiClana, setAktivnostiClana] = React.useState([]);
     const [osvezi, setOsvezi] = React.useState(false);
+    const [url, setUrl] = React.useState('/paginacija');
+    const [linkovi, setLinkovi] = React.useState([]);
+    const [podaci, setPodaci] = React.useState([]);
 
     const {formData, handleChange} = useForm({
         'clanPovezi': -1,
@@ -22,7 +25,7 @@ const Administracija = () => {
         'clanAktivnost': -1,
         'aktivnost': -1,
         'aktivnostClanaOcena': -1,
-        'ocena': 0,
+        'ocena': 0,
     });
 
     useEffect(() => {
@@ -90,6 +93,43 @@ const Administracija = () => {
         })
 
     }
+
+    //paginacija
+    useEffect(() => {
+
+        server.get(url).then(res => {
+            console.log(res);
+            console.log('paginacija');
+            setPodaci(res.data.podaci.data);
+
+
+            let linkoviDugmici = [];
+
+            //foreach res.data.podaci.links
+            console.log(res.data.podaci.links);
+
+            res.data.podaci.links.forEach(link => {
+
+                if ('&laquo; Previous' === link.label){
+                    link.label = 'Prethodna';
+                }
+
+                if ('Next &raquo;' === link.label){
+                    link.label = 'Sledeca';
+                }
+
+                linkoviDugmici.push({
+                    url: link.url,
+                    label: link.label,
+                    active: link.active
+                });
+            });
+
+            setLinkovi(linkoviDugmici);
+        }).catch(err => {
+            console.log(err);
+        })
+    }, [url]);
 
     const dodeli = () => {
 
@@ -235,6 +275,52 @@ const Administracija = () => {
                     <Form.Control name="ocena" onChange={handleChange} type="number" placeholder="Unesite ocenu" />
                     <hr/>
                     <Button onClick={promeniOcenu} className="m-1" variant="dark">Promeni ocenu</Button>
+                </Col>
+            </Row>
+
+            <Row>
+                <Col md={12}>
+                    <h1 className="main-title text-center p-1 mt-3">Clanovi Projekta</h1>
+                    <Table striped>
+                        <thead>
+                        <tr>
+                            <th>Clan</th>
+                            <th>Projekat</th>
+                            <th>Uloga</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {
+                            podaci.map((clanProjekta, index) => {
+                                return (
+                                    <tr key={clanProjekta.clanProjektaId}>
+                                        <td>{clanProjekta.imePrezime}</td>
+                                        <td>{clanProjekta.nazivProjekta}</td>
+                                        <td>{clanProjekta.uloga}</td>
+                                    </tr>
+                                )
+                            })
+                        }
+                        </tbody>
+                    </Table>
+                    {
+                        linkovi !== [] && (
+                                <>
+                                    {
+                                        linkovi.map((link, index) => {
+                                            return (
+                                                <Button key={index} onClick={
+                                                    () => {
+                                                        setUrl(link.url);
+                                                    }
+                                                } disabled={link.active || link.url === null} className="m-1" variant="dark">{link.label}</Button>
+                                            )
+                                        })
+                                    }
+                                </>
+
+                        )
+                    }
                 </Col>
             </Row>
 
