@@ -1,11 +1,35 @@
 import React, {useEffect} from 'react';
 import server from "../pomocne/server";
-import {Accordion, Col, Row, Table} from "react-bootstrap";
+import {Accordion, Alert, Col, Row, Table} from "react-bootstrap";
 import Projekat from "../komponente/Projekat";
 const Projekti = () => {
 
     const [projekti, setProjekti] = React.useState([]);
     const [prijateljiProjekata, setPrijateljiProjekata] = React.useState([]);
+
+    const [qod, setQod] = React.useState({
+        citat: '',
+        autor: ''
+    });
+
+    useEffect(() => {
+        //https://api.quotable.io/random?size=10
+
+        server.get('https://api.quotable.io/random?size=10').then(res => {
+            console.log('usao');
+
+            console.log(res.data);
+            setQod({
+                citat: res.data.content,
+                autor: res.data.author
+            });
+        }).catch(err => {
+            console.log('error');
+
+            console.log(err);
+        })
+
+    }, []);
 
 
     useEffect(() => {
@@ -39,6 +63,13 @@ const Projekti = () => {
                     })
                 }
             </Accordion>
+
+            <Row>
+                <Alert className="mt-3" variant="info">
+                    <h3><em>{qod.citat}</em></h3>
+                    <p className="text-end">- {qod.autor}</p>
+                </Alert>
+            </Row>
 
             <Row>
                 <Col md={12}>
