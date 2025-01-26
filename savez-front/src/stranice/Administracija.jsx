@@ -34,11 +34,11 @@ const Administracija = () => {
         'adresa': '',
         'telefon': '',
         'datumRodjenja': '',
-        'pol': '',
+        'pol': 'M',
         'datumPristupa': '',
-        'datumIsteka': '',
+        'datumIsteka': null,
         'napomena': '',
-        'timId': -1,
+        'timId': 1,
     });
 
     useEffect(() => {

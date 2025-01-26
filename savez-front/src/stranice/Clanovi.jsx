@@ -1,12 +1,16 @@
 import React, {useEffect} from 'react';
 import server from "../pomocne/server";
-import {Col, Form, Row} from "react-bootstrap";
+import {Button, Col, Form, Row} from "react-bootstrap";
 import Clan from "../komponente/Clan";
+import {CSVLink} from "react-csv";
 const Clanovi = () => {
 
     const [clanovi, setClanovi] = React.useState([]);
     const [timovi, setTimovi] = React.useState([]);
     const [izabraniTim, setIzabraniTim] = React.useState(0);
+    const [csvData, setCsvData] = React.useState([]);
+
+    const isAdmin = JSON.parse(window.sessionStorage.getItem('user')).ulogaUSistemu === 'admin';
 
     useEffect(() => {
 
@@ -21,6 +25,21 @@ const Clanovi = () => {
         server.get(url).then(res => {
             console.log(res);
             setClanovi(res.data.podaci);
+
+            let data = [];
+
+            res.data.podaci.forEach(clan => {
+                data.push({
+                    imePrezime: clan.imePrezime,
+                    adresa: clan.adresa,
+                    tim: clan.tim.nazivTima,
+                    telefon: clan.telefon,
+                    email: clan.email
+                });
+            });
+
+            setCsvData(data);
+
         }).catch(err => {
             console.log(err);
         })
@@ -53,6 +72,12 @@ const Clanovi = () => {
                         })
                     }
                 </Form.Select>
+
+            { isAdmin &&
+                <Row>
+                    <CSVLink data={csvData}>Preuzmite podatke o clanovima</CSVLink>
+                </Row>
+            }
 
             <Row>
                 {
