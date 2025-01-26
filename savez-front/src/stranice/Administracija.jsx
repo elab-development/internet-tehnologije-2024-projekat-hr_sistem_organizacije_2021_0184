@@ -18,6 +18,9 @@ const Administracija = () => {
     const [url, setUrl] = React.useState('/paginacija');
     const [linkovi, setLinkovi] = React.useState([]);
     const [podaci, setPodaci] = React.useState([]);
+    const [timovi, setTimovi] = React.useState([]);
+
+    const slikaRef = React.useRef();
 
     const {formData, handleChange} = useForm({
         'clanPovezi': -1,
@@ -26,6 +29,16 @@ const Administracija = () => {
         'aktivnost': -1,
         'aktivnostClanaOcena': -1,
         'ocena': 0,
+        'imePrezime': '',
+        'email': '',
+        'adresa': '',
+        'telefon': '',
+        'datumRodjenja': '',
+        'pol': '',
+        'datumPristupa': '',
+        'datumIsteka': '',
+        'napomena': '',
+        'timId': -1,
     });
 
     useEffect(() => {
@@ -40,6 +53,16 @@ const Administracija = () => {
         })
 
     }, [osvezi]);
+
+    useEffect(() => {
+        server.get('/timovi').then(res => {
+            console.log(res);
+            setTimovi(res.data.podaci);
+        }).catch(err => {
+            console.log(err);
+            setPoruka('Greska prilikom ucitavanja timova');
+        })
+    }, []);
 
     useEffect(() => {
         server.get('/nepovezani-korisnici').then(res => {
@@ -186,6 +209,37 @@ const Administracija = () => {
         })
     }
 
+    const unesiClana = () => {
+        let slikaFile = slikaRef.current.files[0];
+
+        let formToSend = new FormData();
+        formToSend.append('imePrezime', formData.imePrezime);
+        formToSend.append('email', formData.email);
+        formToSend.append('adresa', formData.adresa);
+        formToSend.append('telefon', formData.telefon);
+        formToSend.append('datumRodjenja', formData.datumRodjenja);
+        formToSend.append('pol', formData.pol);
+        formToSend.append('datumPristupa', formData.datumPristupa);
+        formToSend.append('datumIsteka', formData.datumIsteka);
+        formToSend.append('napomena', formData.napomena);
+        formToSend.append('timId', formData.timId);
+        formToSend.append('slikaFajl', slikaFile);
+
+        server.post('/clanovi', formToSend).then(res => {
+            console.log(res);
+            if (res.data.uspesno === true){
+                setUspesnaPoruka('Uspesno unet clan');
+                setOsvezi(!osvezi);
+            }else{
+                setPoruka(res.data.poruka);
+            }
+        }).catch(err => {
+            console.log(err);
+            setPoruka('Greska prilikom unosa clana');
+        });
+
+    }
+
     return (
         <>
             <h1 className="main-title text-center p-1 mt-3">Admin panel</h1>
@@ -275,6 +329,51 @@ const Administracija = () => {
                     <Form.Control name="ocena" onChange={handleChange} type="number" placeholder="Unesite ocenu" />
                     <hr/>
                     <Button onClick={promeniOcenu} className="m-1" variant="dark">Promeni ocenu</Button>
+                </Col>
+            </Row>
+
+            <Row>
+                <Col md={12}>
+                    <h1 className="main-title text-center p-1 mt-3">Unos novog clana</h1>
+                    <Form.Label className="m-1" column={1}>Ime i prezime</Form.Label>
+                    <Form.Control name="imePrezime" onChange={handleChange} type="text" placeholder="Unesite ime i prezime" />
+                    <Form.Label className="m-1" column={1}>Email</Form.Label>
+                    <Form.Control name="email" onChange={handleChange} type="email" placeholder="Unesite email" />
+                    <Form.Label className="m-1" column={1}>Adresa</Form.Label>
+                    <Form.Control name="adresa" onChange={handleChange} type="text" placeholder="Unesite adresu" />
+                    <Form.Label className="m-1" column={1}>Telefon</Form.Label>
+                    <Form.Control name="telefon" onChange={handleChange} type="text" placeholder="Unesite telefon" />
+                    <Form.Label className="m-1" column={1}>Datum rodjenja</Form.Label>
+                    <Form.Control name="datumRodjenja" onChange={handleChange} type="text" placeholder="yyyy-MM-dd" />
+                    <Form.Label className="m-1" column={1}>Pol</Form.Label>
+                    <Form.Select name="pol" onChange={handleChange} className="p-1 m-1">
+                        <option value="M">Muski</option>
+                        <option value="Z">Zenski</option>
+                    </Form.Select>
+                    <Form.Label className="m-1" column={1}>Datum pristupa</Form.Label>
+                    <Form.Control name="datumPristupa" onChange={handleChange} type="text" placeholder="yyyy-MM-dd" />
+                    <Form.Label className="m-1" column={1}>Datum isteka</Form.Label>
+                    <Form.Control name="datumIsteka" onChange={handleChange} type="text" placeholder="yyyy-MM-dd" />
+                    <Form.Label className="m-1" column={1}>Napomena</Form.Label>
+                    <Form.Control name="napomena" onChange={handleChange} type="text" placeholder="Unesite napomenu" />
+                    <Form.Label className="m-1" column={1}>Tim</Form.Label>
+                    <Form.Select name="timId" onChange={handleChange} className="p-1 m-1">
+                        {
+                            timovi.map((tim, index) => {
+                                return (
+                                    <option value={tim.id} key={tim.id}>{tim.nazivTima}</option>
+                                )
+                            })
+                        }
+                    </Form.Select>
+
+                    <Form.Label className="m-1" column={1}>Slika</Form.Label>
+                    <Form.Control ref={slikaRef} name="slika" onChange={handleChange} type="file" />
+
+                    <hr/>
+
+                    <Button onClick={unesiClana} className="m-1" variant="dark">Unesi clana</Button>
+
                 </Col>
             </Row>
 
